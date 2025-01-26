@@ -15,7 +15,7 @@
 {% endif %}
 <p class="text-muted mt-3">
                         Data dodania: {{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
-<br>Autor: {{ post.user_id }}
+<br>Autor: {{ post.user.email }}
 </p>
 <a href="{{ url_for('post_detail', post_id=post.id) }}" class="btn btn-primary">Komentarze</a>
                     {% if post.user_id == current_user.get_id() %}
