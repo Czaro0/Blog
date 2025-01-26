@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Rejestracja</h1>
+    <form method="POST" action="{{ url_for('security.register') }}">
+        {{ register_user_form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            {{ register_user_form.email(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            <label for="nickname" class="form-label">Nickname</label>
+            {{ register_user_form.nickname(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Hasło</label>
+            {{ register_user_form.password(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            <label for="password_confirm" class="form-label">Potwierdź hasło</label>
+            {{ register_user_form.password_confirm(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Zarejestruj się</button>
+    </form>
+</div>
+{% endblock %}

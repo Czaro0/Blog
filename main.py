@@ -1,9 +1,23 @@
 import os
 from flask import Flask, request, render_template, redirect, url_for
 from flask_security import Security, UserMixin, RoleMixin, SQLAlchemyUserDatastore, current_user, login_required
+from flask_security.forms import RegisterForm, LoginForm
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired, Length, EqualTo
 from datetime import datetime
+
+class ExtendedRegisterForm(RegisterForm):
+    nickname = StringField('Nickname', validators=[DataRequired(), Length(min=3, max=20)])
+    password_confirm = PasswordField(
+        'Potwierdź hasło',
+        validators=[DataRequired(), EqualTo('password', message='Hasła muszą być identyczne')])
+
+# class CustomLoginForm(LoginForm):
+#     email = StringField('Email', validators=[DataRequired()])
+#     password = PasswordField('Hasło', validators=[DataRequired()])
+
  
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -32,6 +46,7 @@ class Comment(db.Model):
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_nickname = db.Column(db.String(20), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
  
     user = db.relationship('User', backref='comments')
@@ -43,6 +58,7 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     image = db.Column(db.String(255))  # Ścieżka do obrazu
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_nickname = db.Column(db.String(20), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # Data dodania wpisu
 
     user = db.relationship('User',backref='posts')
@@ -55,6 +71,7 @@ class Role(db.Model, RoleMixin):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
+    nickname = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean, default=True)
     confirmed_at = db.Column(db.DateTime)
@@ -68,7 +85,11 @@ class User(db.Model, UserMixin):
             self.fs_uniquifier = str(uuid.uuid4())
  
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
+
+app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+
+security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
  
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -96,7 +117,8 @@ def create_post():
             title=title,
             content=content,
             image=image_filename,
-            user_id=current_user.get_id()
+            user_id=current_user.get_id(),
+            user_nickname=current_user.nickname
         )
         db.session.add(new_post)
         db.session.commit()
@@ -109,7 +131,11 @@ def create_post():
 def add_comment(post_id):
     post = Post.query.get_or_404(post_id)
     content = request.form['content']
-    new_comment = Comment(content=content, user_id=current_user.get_id(), post_id=post_id)
+    new_comment = Comment(
+        content=content,
+        user_id=current_user.get_id(),
+        user_nickname=current_user.nickname,
+        post_id=post_id)
     db.session.add(new_comment)
     db.session.commit()
     return redirect(url_for('post_detail', post_id=post_id))
