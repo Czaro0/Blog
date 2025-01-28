@@ -5,8 +5,12 @@ from flask_security.forms import RegisterForm, LoginForm
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Length, EqualTo
+from wtforms.validators import InputRequired, DataRequired, Length, EqualTo
 from datetime import datetime
+
+class CustomLoginForm(LoginForm):
+    email = StringField('Email', validators=[InputRequired(message="Pole email jest wymagane.")])
+    password = PasswordField('Hasło', validators=[InputRequired(message="Pole hasło jest wymagane.")])
 
 class ExtendedRegisterForm(RegisterForm):
     nickname = StringField('Nickname', validators=[DataRequired(), Length(min=3, max=20)])
@@ -23,6 +27,7 @@ UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
  
 app = Flask(__name__)
+app.config['SECURITY_LOGIN_FORM'] = CustomLoginForm
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'developerskie')
 app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT', 'jakas-sol')
