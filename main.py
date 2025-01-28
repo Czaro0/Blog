@@ -17,11 +17,6 @@ class ExtendedRegisterForm(RegisterForm):
     password_confirm = PasswordField(
         'Potwierdź hasło',
         validators=[DataRequired(), EqualTo('password', message='Hasła muszą być identyczne')])
-
-# class CustomLoginForm(LoginForm):
-#     email = StringField('Email', validators=[DataRequired()])
-#     password = PasswordField('Hasło', validators=[DataRequired()])
-
  
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
