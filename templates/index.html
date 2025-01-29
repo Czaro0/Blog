@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4">
         <h1 class="mb-4 text-center">Mój Blog</h1>
-        <a href="{{ url_for('create_post') }}" class="btn btn-success mb-4">Dodaj nowy wpis</a>
+        <a href="{{ url_for('create_post') }}" class="btn btn-custom mb-4">Dodaj nowy wpis</a>
         
                 {% for post in posts %}
         <div class="card mb-4">
@@ -18,7 +18,7 @@
                                                 Data dodania: {{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
                         <br>Autor: {{ post.user_nickname }}
                         </p>
-                        <a href="{{ url_for('post_detail', post_id=post.id) }}" class="btn btn-success">Komentarze</a>
+                        <a href="{{ url_for('post_detail', post_id=post.id) }}" class="btn btn-custom">Komentarze</a>
                                         {% if post.user_id == current_user.get_id() %}
                         <form method="post" action="{{ url_for('delete_post', post_id=post.id) }}" class="mt-3">
                         <button type="submit" class="btn btn-dark">Usuń</button>

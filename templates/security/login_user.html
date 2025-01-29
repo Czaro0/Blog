@@ -17,11 +17,11 @@
             {{ login_user_form.remember(class="form-check-input") }}
             <label class="form-check-label" for="remember">Zapamiętaj mnie</label>
         </div>
-        <button type="submit" class="btn btn-success">Zaloguj się</button>
+        <button type="submit" class="btn btn-custom">Zaloguj się</button>
     </form>
     <div class="mt-3 text-center">
         <p>Nie masz jeszcze konta?</p>
-        <a href="{{ url_for('security.register') }}" class="btn btn-success">Zarejestruj się</a>
+        <a href="{{ url_for('security.register') }}" class="btn btn-custom">Zarejestruj się</a>
     </div>
 </div>
 {% endblock %}

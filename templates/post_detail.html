@@ -11,18 +11,14 @@
     <p class="text-muted mt-3">
             Data dodania: {{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}<br>
             Autor: {{ post.user_nickname }}
-    </p>
-    
-        <!-- Formularz dodawania komentarzy -->
+    </p>  
     <form method="post" action="{{ url_for('add_comment', post_id=post.id) }}">
         <div class="mb-3">
             <label for="comment" class="form-label">Twój komentarz</label>
             <textarea class="form-control" id="comment" name="content" rows="3" required></textarea>
         </div>
-        <button type="submit" class="btn btn-success">Dodaj komentarz</button>
-    </form>
-    
-        <!-- Lista komentarzy -->
+        <button type="submit" class="btn btn-custom">Dodaj komentarz</button>
+    </form>  
     <h3>Komentarze</h3>
     <ul class="list-group mb-4">
                 {% for comment in post.comments %}

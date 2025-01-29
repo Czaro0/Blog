@@ -59,7 +59,7 @@ class Post(db.Model):
     image = db.Column(db.String(255))  # Ścieżka do obrazu
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user_nickname = db.Column(db.String(20), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now())  # Data dodania wpisu
+    timestamp = db.Column(db.DateTime, default=datetime.now())
 
     user = db.relationship('User',backref='posts')
  
@@ -75,7 +75,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean, default=True)
     confirmed_at = db.Column(db.DateTime)
-    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)  # Wymagane od wersji 4.0.0
+    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False) 
     roles = db.relationship('Role', secondary=roles_user, backref=db.backref('users'))
  
     def __init__(self, **kwargs) -> None:
@@ -150,9 +150,8 @@ def post_detail(post_id):
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
-    if post.user_id != current_user.get_id():  # Sprawdzenie, czy użytkownik jest właścicielem posta
+    if post.user_id != current_user.get_id():
         return "Nie masz uprawnień do usunięcia tego wpisu.", 403
-    # Usunięcie obrazu (jeśli istnieje)
     if post.image:
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], post.image)
         if os.path.exists(image_path):
