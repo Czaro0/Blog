@@ -13,11 +13,18 @@ class CustomLoginForm(LoginForm):
     password = PasswordField('Hasło', validators=[InputRequired(message="Pole hasło jest wymagane.")])
 
 class ExtendedRegisterForm(RegisterForm):
+    email = StringField('Email', validators=[DataRequired()])
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Ten email jest już przypisany do konta.')
+        
     nickname = StringField('Nickname', validators=[DataRequired(), Length(min=3, max=20)])
     def validate_nickname(self, nickname):
         user = User.query.filter_by(nickname=nickname.data).first()
         if user:
             raise ValidationError('Ten nickname jest już zajęty. Wybierz inny.')
+        
     password_confirm = PasswordField(
         'Potwierdź hasło',
         validators=[DataRequired(), EqualTo('password', message='Hasła muszą być identyczne')])
@@ -26,9 +33,8 @@ UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
  
 app = Flask(__name__)
-app.config['SECURITY_LOGIN_FORM'] = CustomLoginForm
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'developerskie')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'Spadajaca_gwiazda_spelnia_sny')
 app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT', 'Najasniejsza_Gwiazda')
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
@@ -99,10 +105,12 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
  
 @app.route('/')
-@login_required
 def index():
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template('index.html', posts=posts)
+    if current_user.is_authenticated:
+        posts = Post.query.order_by(Post.timestamp.desc()).all()
+        return render_template('index.html', posts=posts)
+    else:
+        return redirect(url_for('security.login'))
  
 @app.route('/create-post', methods=['GET', 'POST'])
 @login_required

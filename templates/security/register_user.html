@@ -2,29 +2,37 @@
 {% block content %}
 <div class="container mt-4">
     <h1>Rejestracja</h1>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
     <form method="POST" action="{{ url_for('security.register') }}">
         {{ register_user_form.hidden_tag() }}
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             {{ register_user_form.email(class="form-control") }}
+            {% if register_user_form.email.errors %}
+                <div class="text-danger">
+                    {% for error in register_user_form.email.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
+
         <div class="mb-3">
             <label for="nickname" class="form-label">Nickname</label>
             {{ register_user_form.nickname(class="form-control") }}
+            {% if register_user_form.nickname.errors %}
+                <div class="text-danger">
+                    {% for error in register_user_form.nickname.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
+
         <div class="mb-3">
             <label for="password" class="form-label">Hasło</label>
             {{ register_user_form.password(class="form-control") }}
         </div>
+
         <div class="mb-3">
             <label for="password_confirm" class="form-label">Potwierdź hasło</label>
             {{ register_user_form.password_confirm(class="form-control") }}
@@ -32,4 +40,11 @@
         <button type="submit" class="btn btn-custom">Zarejestruj się</button>
     </form>
 </div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 {% endblock %}
