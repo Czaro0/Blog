@@ -25,7 +25,7 @@ app = Flask(__name__)
 app.config['SECURITY_LOGIN_FORM'] = CustomLoginForm
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'developerskie')
-app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT', 'jakas-sol')
+app.config['SECURITY_PASSWORD_SALT'] = os.environ.get('SECURITY_PASSWORD_SALT', 'Najasniejsza_Gwiazda')
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -44,7 +44,7 @@ roles_user = db.Table(
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user_nickname = db.Column(db.String(20), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
@@ -59,7 +59,7 @@ class Post(db.Model):
     image = db.Column(db.String(255))  # Ścieżka do obrazu
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user_nickname = db.Column(db.String(20), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # Data dodania wpisu
+    timestamp = db.Column(db.DateTime, default=datetime.now())  # Data dodania wpisu
 
     user = db.relationship('User',backref='posts')
  
