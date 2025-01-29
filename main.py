@@ -5,7 +5,7 @@ from flask_security.forms import RegisterForm, LoginForm
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField
-from wtforms.validators import InputRequired, DataRequired, Length, EqualTo
+from wtforms.validators import InputRequired, DataRequired, Length, EqualTo, ValidationError
 from datetime import datetime
 
 class CustomLoginForm(LoginForm):
@@ -14,6 +14,10 @@ class CustomLoginForm(LoginForm):
 
 class ExtendedRegisterForm(RegisterForm):
     nickname = StringField('Nickname', validators=[DataRequired(), Length(min=3, max=20)])
+    def validate_nickname(self, nickname):
+        user = User.query.filter_by(nickname=nickname.data).first()
+        if user:
+            raise ValidationError('Ten nickname jest już zajęty. Wybierz inny.')
     password_confirm = PasswordField(
         'Potwierdź hasło',
         validators=[DataRequired(), EqualTo('password', message='Hasła muszą być identyczne')])
@@ -44,7 +48,7 @@ roles_user = db.Table(
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now())
+    timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user_nickname = db.Column(db.String(20), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
@@ -136,7 +140,8 @@ def add_comment(post_id):
         content=content,
         user_id=current_user.get_id(),
         user_nickname=current_user.nickname,
-        post_id=post_id)
+        post_id=post_id,
+        timestamp=datetime.now())
     db.session.add(new_comment)
     db.session.commit()
     return redirect(url_for('post_detail', post_id=post_id))

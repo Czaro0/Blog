@@ -2,6 +2,15 @@
 {% block content %}
 <div class="container mt-4">
     <h1>Rejestracja</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
     <form method="POST" action="{{ url_for('security.register') }}">
         {{ register_user_form.hidden_tag() }}
         <div class="mb-3">
