@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4">
     <h1>{{ post.title }}</h1>
-    <p>{{ post.content }}</p>
+    <p style="white-space: pre-line;">{{ post.content }}</p>
         {% if post.image %}
     <img src="{{ url_for('static', filename='uploads/' + post.image) }}"
         alt="Post image" class="img-fluid mt-3 rounded">
@@ -23,7 +23,7 @@
     <ul class="list-group mb-4">
                 {% for comment in post.comments %}
         <li class="list-group-item">
-            <p>{{ comment.content }}</p>
+            <p style="white-space: pre-line;">{{ comment.content }}</p>
             <small class="text-muted">Dodano przez {{ comment.user_nickname }}<br>
                 {{ comment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small>
         </li>

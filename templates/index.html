@@ -9,7 +9,7 @@
         <div class="card mb-4">
                 <div class="card-body">
                         <h2 class="card-title">{{ post.title }}</h2>
-                        <p class="card-text">{{ post.content }}</p>
+                        <p class="card-text" style="white-space: pre-line;">{{ post.content}}</p>
                         {% if post.image %}
                                 <img src="{{ url_for('static', filename='uploads/' + post.image) }}"
                                         alt="Post image" class="img-fluid mt-3 rounded post-image">

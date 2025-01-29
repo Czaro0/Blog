@@ -59,7 +59,7 @@ class Post(db.Model):
     image = db.Column(db.String(255))  # Ścieżka do obrazu
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user_nickname = db.Column(db.String(20), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now())
+    timestamp = db.Column(db.DateTime)
 
     user = db.relationship('User',backref='posts')
  
@@ -118,7 +118,8 @@ def create_post():
             content=content,
             image=image_filename,
             user_id=current_user.get_id(),
-            user_nickname=current_user.nickname
+            user_nickname=current_user.nickname,
+            timestamp = datetime.now()
         )
         db.session.add(new_post)
         db.session.commit()
